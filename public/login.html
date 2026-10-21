@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Maintenance System</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e0eaff, #f5f7fb);
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 32px;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 16px;
+      box-shadow: 0 10px 35px #25385820;
+    }
+    h1 { text-align: center; color: #203864; }
+    p { text-align: center; color: #667085; }
+    label { display: block; margin-top: 16px; font-weight: bold; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccd3df;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 8px;
+      background: #2457d6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #message { margin-top: 16px; }
+    a { color: #2457d6; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Welcome Back</h1>
+    <p>Login to Maintenance System</p>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" required autocomplete="username">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required
+             autocomplete="current-password">
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="message" role="status"></p>
+    <p>New student? <a href="/register.html">Create account</a></p>
+  </main>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      message.textContent = 'Logging in...';
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        message.textContent = 'Login successful! Welcome, ' + data.user.name;
+        setTimeout(() => {
+  window.location.href = '/';
+}, 1000);
+        message.style.color = 'green';
+
+        // API verification only; session-based access is not implemented yet.
+      } catch (error) {
+        message.textContent = error.message || 'Unable to connect to server';
+        message.style.color = 'crimson';
+      }
+    });
+  </script>
+</body>
+</html>

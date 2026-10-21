@@ -1,0 +1,525 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Management System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: #173b70;
+      color: white;
+      padding: 22px 7%;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 27px;
+    }
+
+    header p {
+      margin: 0;
+      color: #dbeafe;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .stat, .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 3px 12px #0000000a;
+    }
+
+    .stat p {
+      margin: 0 0 10px;
+      color: #64748b;
+    }
+
+    .stat strong {
+      font-size: 28px;
+    }
+
+    .panel {
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 21px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 7px;
+      background: #2458a6;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .secondary {
+      background: #475569;
+    }
+
+    .danger {
+      background: #b91c1c;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .toolbar input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th, td {
+      padding: 13px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f8fafc;
+    }
+
+    td select {
+      min-width: 125px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #e2e8f0;
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 25px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Maintenance Management System</h1>
+    <p>Submit, track and manage maintenance complaints</p>
+  </header>
+
+  <main>
+    <section class="stats">
+      <div class="stat">
+        <p>Total Complaints</p>
+        <strong id="totalCount">0</strong>
+      </div>
+      <div class="stat">
+        <p>Pending</p>
+        <strong id="pendingCount">0</strong>
+      </div>
+      <div class="stat">
+        <p>In Progress</p>
+        <strong id="progressCount">0</strong>
+      </div>
+      <div class="stat">
+        <p>Resolved</p>
+        <strong id="resolvedCount">0</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Submit a Complaint</h2>
+
+      <form id="complaintForm">
+        <div class="form-grid">
+          <div>
+            <label for="studentName">Student Name *</label>
+            <input id="studentName" name="studentName"
+              required placeholder="Enter student name">
+          </div>
+
+          <div>
+            <label for="roomNumber">Room Number *</label>
+            <input id="roomNumber" name="roomNumber"
+              required placeholder="e.g. 101">
+          </div>
+
+          <div>
+            <label for="complaintType">Complaint Type *</label>
+            <select id="complaintType" name="complaintType" required>
+              <option value="">Select type</option>
+              <option>Electrical</option>
+              <option>Plumbing</option>
+              <option>Furniture</option>
+              <option>Cleaning</option>
+              <option>Internet</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+              <option>Medium</option>
+              <option>Low</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <label for="description">Complaint Description *</label>
+            <textarea id="description" name="description"
+              required placeholder="Describe the problem..."></textarea>
+          </div>
+
+          <div class="full">
+            <button type="submit">Submit Complaint</button>
+            <p id="formMessage" class="message" role="status"></p>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>All Complaints</h2>
+
+      <div class="toolbar">
+        <input id="searchInput"
+          placeholder="Search name, room, type or complaint ID...">
+        <button type="button" class="secondary"
+          id="refreshButton">Refresh</button>
+      </div>
+
+      <p id="listMessage" role="status"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Room</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="complaintsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('complaintForm');
+    const formMessage = document.getElementById('formMessage');
+    const listMessage = document.getElementById('listMessage');
+    const tableBody = document.getElementById('complaintsTable');
+    const searchInput = document.getElementById('searchInput');
+
+    let complaints = [];
+
+    function addCell(row, value) {
+      const cell = document.createElement('td');
+      cell.textContent = value ?? '-';
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function updateCounts() {
+      document.getElementById('totalCount').textContent =
+        complaints.length;
+
+      document.getElementById('pendingCount').textContent =
+        complaints.filter(c => c.status === 'Pending').length;
+
+      document.getElementById('progressCount').textContent =
+        complaints.filter(c => c.status === 'In Progress').length;
+
+      document.getElementById('resolvedCount').textContent =
+        complaints.filter(c => c.status === 'Resolved').length;
+    }
+
+    function renderComplaints() {
+      const query = searchInput.value.trim().toLowerCase();
+
+      const filtered = complaints.filter(c => {
+        const text = [
+          c.studentName,
+          c.roomNumber,
+          c.complaintType,
+          c.description,
+          c._id
+        ].join(' ').toLowerCase();
+
+        return text.includes(query);
+      });
+
+      tableBody.replaceChildren();
+
+      if (filtered.length === 0) {
+        const row = document.createElement('tr');
+        const cell = addCell(row, 'No complaints found.');
+        cell.colSpan = 7;
+        cell.className = 'empty';
+        tableBody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach(complaint => {
+        const row = document.createElement('tr');
+
+        addCell(row, complaint.studentName);
+        addCell(row, complaint.roomNumber);
+        addCell(row, complaint.complaintType);
+        addCell(row, complaint.description);
+
+        const priorityCell = addCell(row, '');
+        const priorityBadge = document.createElement('span');
+        priorityBadge.className = 'badge';
+        priorityBadge.textContent = complaint.priority || 'Medium';
+        priorityCell.appendChild(priorityBadge);
+
+        const statusCell = addCell(row, '');
+        const statusSelect = document.createElement('select');
+
+        ['Pending', 'In Progress', 'Resolved'].forEach(status => {
+          const option = document.createElement('option');
+          option.value = status;
+          option.textContent = status;
+          statusSelect.appendChild(option);
+        });
+
+        statusSelect.value = complaint.status || 'Pending';
+        statusSelect.setAttribute('aria-label', 'Update complaint status');
+
+        statusSelect.addEventListener('change', async () => {
+          statusSelect.disabled = true;
+
+          try {
+            const response = await fetch(
+              `/complaints/${encodeURIComponent(complaint._id)}`,
+              {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: statusSelect.value })
+              }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || 'Could not update status');
+            }
+
+            listMessage.textContent = data.message;
+            await loadComplaints();
+          } catch (error) {
+            alert(error.message);
+            statusSelect.value = complaint.status || 'Pending';
+          } finally {
+            statusSelect.disabled = false;
+          }
+        });
+
+        statusCell.appendChild(statusSelect);
+
+        const actionsCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'danger';
+        deleteButton.textContent = 'Delete';
+
+        deleteButton.addEventListener('click', async () => {
+          if (!confirm('Delete this complaint permanently?')) return;
+
+          deleteButton.disabled = true;
+
+          try {
+            const response = await fetch(
+              `/complaints/${encodeURIComponent(complaint._id)}`,
+              { method: 'DELETE' }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || 'Could not delete complaint');
+            }
+
+            listMessage.textContent = data.message;
+            await loadComplaints();
+          } catch (error) {
+            alert(error.message);
+            deleteButton.disabled = false;
+          }
+        });
+
+        actionsCell.appendChild(deleteButton);
+        row.appendChild(actionsCell);
+        tableBody.appendChild(row);
+      });
+    }
+
+    async function loadComplaints() {
+      listMessage.textContent = 'Loading complaints...';
+
+      try {
+        const response = await fetch('/complaints');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Could not load complaints');
+        }
+
+        complaints = data;
+        updateCounts();
+        renderComplaints();
+        listMessage.textContent =
+          `Loaded ${complaints.length} complaint(s).`;
+      } catch (error) {
+        listMessage.textContent = 'Error: ' + error.message;
+      }
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+
+      const payload = {
+        studentName: document.getElementById('studentName').value.trim(),
+        roomNumber: document.getElementById('roomNumber').value.trim(),
+        complaintType: document.getElementById('complaintType').value,
+        priority: document.getElementById('priority').value,
+        description: document.getElementById('description').value.trim()
+      };
+
+      formMessage.textContent = 'Submitting...';
+
+      try {
+        const response = await fetch('/complaints', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Could not submit complaint');
+        }
+
+        formMessage.textContent = data.message;
+        form.reset();
+        await loadComplaints();
+      } catch (error) {
+        formMessage.textContent = 'Error: ' + error.message;
+      }
+    });
+
+    searchInput.addEventListener('input', renderComplaints);
+    document.getElementById('refreshButton')
+      .addEventListener('click', loadComplaints);
+
+    loadComplaints();
+  </script>
+</body>
+</html>
+```
